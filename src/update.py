@@ -138,4 +138,6 @@ def test_inference(args, model, test_dataset):
         total += len(labels)
 
     accuracy = correct/total
-    return accuracy, 
+    avg_loss = loss/total
+
+    return accuracy, avg_loss
