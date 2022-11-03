@@ -1,6 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Python version: 3.6
+# Python version: 3.8.13
+
+'''
+    run: python fl_main.py --model=mlp --dataset=mnist --gpu=0 --epochs=10
+'''
 
 
 import os
