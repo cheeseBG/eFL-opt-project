@@ -26,7 +26,7 @@ from util.utils import get_dataset, average_weights, exp_details
 if __name__ == '__main__':
     start_time = time.time()
 
-    # define paths
+    # define paths+-
     path_project = os.path.abspath('..')
     logger = SummaryWriter('../logs')
 

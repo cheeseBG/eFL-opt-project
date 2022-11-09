@@ -39,11 +39,9 @@ if __name__ == '__main__':
 
     # BUILD MODEL
     if args.model == 'cnn':
-        # Convolutional neural netork
+        # Convolutional neural network
         if args.dataset == 'mnist':
             global_model = CNNMnist(args=args)
-        elif args.dataset == 'fmnist':
-            global_model = CNNFashion_Mnist(args=args)
         elif args.dataset == 'cifar':
             global_model = CNNCifar(args=args)
 
@@ -91,6 +89,11 @@ if __name__ == '__main__':
 
         # update global weights
         global_weights = average_weights(local_weights)
+
+        print('\nTest Sim\n')
+        from efl_util import cos_similarity
+        print(cos_similarity(global_weights.keys(), local_weights[0], global_weights))
+        exit()
 
         # update global weights
         global_model.load_state_dict(global_weights)
