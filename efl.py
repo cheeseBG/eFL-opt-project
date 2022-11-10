@@ -18,6 +18,9 @@ from util.update import LocalUpdate, test_inference
 from util.models import MLP, CNNMnist, CNNFashion_Mnist, CNNCifar
 from util.utils import get_dataset, average_weights, exp_details
 
+from efl_util import cos_similarity
+from local_device import LocalDevice
+
 
 if __name__ == '__main__':
     start_time = time.time()
@@ -35,6 +38,7 @@ if __name__ == '__main__':
     device = 'cuda' if args.gpu else 'cpu'
 
     # load dataset and user groups
+    # each user has own dataset
     train_dataset, test_dataset, user_groups = get_dataset(args)
 
     # BUILD MODEL
@@ -76,11 +80,11 @@ if __name__ == '__main__':
         print(f'\n | Global Training Round : {epoch+1} |\n')
 
         global_model.train()
-        m = max(int(args.frac * args.num_users), 1)
+        m = max(int(args.frac * args.num_users), 1)  # fraction of clients (default: 10)
         idxs_users = np.random.choice(range(args.num_users), m, replace=False)
 
         for idx in idxs_users:
-            local_model = LocalUpdate(args=args, dataset=train_dataset,
+            local_model = LocalDevice(args=args, dataset=train_dataset,
                                       idxs=user_groups[idx], logger=logger)
             w, loss = local_model.update_weights(
                 model=copy.deepcopy(global_model), global_round=epoch)
@@ -90,12 +94,10 @@ if __name__ == '__main__':
         # update global weights
         global_weights = average_weights(local_weights)
 
-        print('\nTest Sim\n')
-        from efl_util import cos_similarity
         cos_sim = cos_similarity(global_weights.keys(), local_weights[0], global_weights)
-
         print(cos_sim)
         exit()
+
 
         # update global weights
         global_model.load_state_dict(global_weights)

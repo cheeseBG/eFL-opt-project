@@ -3,8 +3,9 @@ import numpy as np
 
 def cos_similarity(keys, l_params, g_params):
     '''
-    :param l_params: Local model parameters (i th iteration)
-    :param g_params: Global model parameters (i-1 th iteration)
+    :param1 keys: name list of model layers
+    :param2 l_params: Local model parameters (i th iteration)
+    :param3 g_params: Global model parameters (i-1 th iteration)
     :return: similarity value
     '''
     sim_list = list()
@@ -24,5 +25,8 @@ def cos_similarity(keys, l_params, g_params):
     # Return average cos_sim
     avg_sim = sum(s[1] for s in sim_list) / len(sim_list)
 
-    return avg_sim
+    # Normalize range of [0,1]
+    norm_sim = avg_sim * 0.5 + 0.5
+
+    return norm_sim
 
