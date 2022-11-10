@@ -21,8 +21,8 @@ def cos_similarity(keys, l_params, g_params):
         sim = lg_dot / float(l_norm * g_norm)
         sim_list.append([key, sim])
 
-        # Return average cos_sim
-        avg_sim = sum(s[1] for s in sim_list) / len(sim_list)
+    # Return average cos_sim
+    avg_sim = sum(s[1] for s in sim_list) / len(sim_list)
 
     return avg_sim
 
