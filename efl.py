@@ -92,7 +92,9 @@ if __name__ == '__main__':
 
         print('\nTest Sim\n')
         from efl_util import cos_similarity
-        print(cos_similarity(global_weights.keys(), local_weights[0], global_weights))
+        cos_sim = cos_similarity(global_weights.keys(), local_weights[0], global_weights)
+
+        print(cos_sim)
         exit()
 
         # update global weights
