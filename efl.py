@@ -105,7 +105,6 @@ if __name__ == '__main__':
 
         cos_sim = cos_similarity(global_weights.keys(), local_weights[0], global_weights)
         print(cos_sim)
-        exit()
 
 
         # update global weights

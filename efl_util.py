@@ -12,8 +12,8 @@ def cos_similarity(keys, l_params, g_params):
 
     for key in keys:
 
-        l_vec = l_params[key]
-        g_vec = g_params[key]
+        l_vec = l_params[key].to('cpu')
+        g_vec = g_params[key].to('cpu')
 
         l_norm = np.linalg.norm(l_vec)
         g_norm = np.linalg.norm(g_vec)
