@@ -32,10 +32,19 @@ if __name__ == '__main__':
     args = args_parser()
     exp_details(args)
 
-    if args.gpu:
+    if args.gpu==0:
+        print('\n### Use GPU ###\n')
         device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
         torch.cuda.set_device(device)
-    device = 'cuda' if args.gpu else 'cpu'
+        device = 'gpu' if args.gpu == 0 else 'cpu'
+    # For m1 GPU acc
+    elif args.gpu==1:
+        print('\n### Use mps ###\n')
+        device = torch.device("mps:0" if torch.backends.mps.is_available() else "cpu")
+        device = 'mps' if args.gpu==1 else 'cpu'
+    else:
+        print('Nope')
+        device='mps'
 
     # load dataset and user groups
     # each user has own dataset

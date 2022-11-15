@@ -12,7 +12,14 @@ class LocalDevice(LocalUpdate):
         self.logger = logger
         self.trainloader, self.validloader, self.testloader = self.train_val_test(
             dataset, list(idxs))
-        self.device = 'cuda' if args.gpu else 'cpu'
+
+        if args.gpu == 0:
+            self.device = 'cuda'
+        elif args.gpu == 1:
+            self.device = 'mps'
+        else:
+            self.device = 'cpu'
+
         # Default criterion set to NLL loss function
         self.criterion = nn.NLLLoss().to(self.device)
 
