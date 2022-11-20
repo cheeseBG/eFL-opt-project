@@ -8,6 +8,9 @@ from torchvision import datasets, transforms
 from util.sampling import mnist_iid, mnist_noniid, mnist_noniid_unequal
 from util.sampling import cifar_iid, cifar_noniid
 
+'''
+For EFL, set 70% data have dirty labels
+'''
 
 def get_dataset(args):
     """ Returns train and test datasets and a user group which is a dict where

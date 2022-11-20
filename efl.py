@@ -100,12 +100,14 @@ if __name__ == '__main__':
             local_weights.append(copy.deepcopy(w))
             local_losses.append(copy.deepcopy(loss))
 
+        # Calculate cosine similarity with global weight(t-1) and local weight(t)
+        # cosine similarity
+        cos_sim_list = []
+        cos_sim = cos_similarity(global_weights.keys(), local_weights[0], global_weights)
+        cos_sim_list.append(cos_sim)
+
         # update global weights
         global_weights = average_weights(local_weights)
-
-        cos_sim = cos_similarity(global_weights.keys(), local_weights[0], global_weights)
-        print(cos_sim)
-
 
         # update global weights
         global_model.load_state_dict(global_weights)
@@ -129,6 +131,15 @@ if __name__ == '__main__':
             print(f' \nAvg Training Stats after {epoch+1} global rounds:')
             print(f'Training Loss : {np.mean(np.array(train_loss))}')
             print('Train Accuracy: {:.2f}% \n'.format(100*train_accuracy[-1]))
+
+    print("### cos ###")
+    print(sum(cos_sim_list) / len(cos_sim_list))
+    print('min: {} max: {}'.format(min(cos_sim_list), max(cos_sim_list)))
+    ''' 
+    Threshold for 
+        - MLP {0.95, 0.955, 0.96, 0.965, 0.97, 0.975, *0.98, 0.985}
+        - CNN {0.9995, 0.9996, 0.9997, 0.9998, *0.9999}
+    '''
 
     # Test inference after completion of training
     test_acc, test_loss = test_inference(args, global_model, test_dataset)
