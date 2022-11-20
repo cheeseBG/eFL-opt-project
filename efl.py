@@ -20,6 +20,7 @@ from util.utils import get_dataset, average_weights, exp_details
 
 from efl_util import cos_similarity
 from local_device import LocalDevice
+from plot.plot_fig4 import cdf
 
 
 if __name__ == '__main__':
@@ -84,6 +85,8 @@ if __name__ == '__main__':
     print_every = 2
     val_loss_pre, counter = 0, 0
 
+    cos_sim_list = []
+
     for epoch in tqdm(range(args.epochs)):
         local_weights, local_losses = [], []
         print(f'\n | Global Training Round : {epoch+1} |\n')
@@ -104,8 +107,7 @@ if __name__ == '__main__':
         global_weights = average_weights(local_weights)
 
         cos_sim = cos_similarity(global_weights.keys(), local_weights[0], global_weights)
-        print(cos_sim)
-        exit()
+        cos_sim_list.append(cos_sim)
 
 
         # update global weights
@@ -133,6 +135,13 @@ if __name__ == '__main__':
 
     # Test inference after completion of training
     test_acc, test_loss = test_inference(args, global_model, test_dataset)
+
+    cdf(cos_sim_list, args.model)
+
+    import pandas as pd
+    df = pd.DataFrame(cos_sim_list)
+
+    df.to_csv('sim.csv')
 
     print(f' \n Results after {args.epochs} global rounds of training:')
     print("|---- Avg Train Accuracy: {:.2f}%".format(100*train_accuracy[-1]))
