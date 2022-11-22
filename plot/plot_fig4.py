@@ -14,12 +14,12 @@ def cdf(sim_list, model_name):
 
     X = sim_list
     Y = np.cumsum(sim_pdf)
-    print(Y)
+    #Y = norm.cdf(sim_pdf)
 
     plt.figure()
     plt.xlabel('Similarity between model parameters', fontsize=30)
     plt.ylabel('CDF', fontsize=30)
-    plt.plot(X, Y, label=model_name)
+    plt.plot(X, Y/max(Y), label=model_name)
     plt.grid()
     plt.legend()
     plt.show()
@@ -28,5 +28,6 @@ def cdf(sim_list, model_name):
 if __name__ == '__main__':
     import pandas as pd
 
-    df = pd.read_csv('../sim.csv')
+    df = pd.read_csv('../results/sim.csv')
     print(df)
+    cdf(df['0'].to_list(), 'mlp')

@@ -37,7 +37,7 @@ if __name__ == '__main__':
         print('\n### Use GPU ###\n')
         device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
         torch.cuda.set_device(device)
-        device = 'gpu' if args.gpu == 0 else 'cpu'
+        device = 'cuda:0' if args.gpu == 0 else 'cpu'
     # For m1 GPU acc
     elif args.gpu==1:
         print('\n### Use mps ###\n')
@@ -85,6 +85,9 @@ if __name__ == '__main__':
     print_every = 2
     val_loss_pre, counter = 0, 0
 
+    # cosine similarity
+    cos_sim_list = []
+
     for epoch in tqdm(range(args.epochs)):
         local_weights, local_losses = [], []
         print(f'\n | Global Training Round : {epoch+1} |\n')
@@ -101,11 +104,9 @@ if __name__ == '__main__':
             local_weights.append(copy.deepcopy(w))
             local_losses.append(copy.deepcopy(loss))
 
-        # Calculate cosine similarity with global weight(t-1) and local weight(t)
-        # cosine similarity
-        cos_sim_list = []
-        cos_sim = cos_similarity(global_weights.keys(), local_weights[0], global_weights)
-        cos_sim_list.append(cos_sim)
+            # Calculate cosine similarity with global weight(t-1) and local weight(t)
+            cos_sim = cos_similarity(global_weights.keys(), w, global_weights)
+            cos_sim_list.append(cos_sim)
 
         # update global weights
         global_weights = average_weights(local_weights)
@@ -146,7 +147,7 @@ if __name__ == '__main__':
     test_acc, test_loss = test_inference(args, global_model, test_dataset)
 
     cdf(cos_sim_list, args.model)
-
+    print(len(cos_sim_list))
     import pandas as pd
     df = pd.DataFrame(cos_sim_list)
 
