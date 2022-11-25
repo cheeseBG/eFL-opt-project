@@ -63,7 +63,6 @@ def args_parser():
 
     # eFL argument
     parser.add_argument('--dirty', type=int, default=0, help='proportion of dirty data')  # 0~100%
-    parser.add_argument('--fl', type=str, default='efl', help='type of FL')  # options: efl, tfl
 
     args = parser.parse_args()
 
