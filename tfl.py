@@ -53,7 +53,7 @@ if __name__ == '__main__':
 
     # BUILD MODEL
     if args.model == 'cnn':
-        # Convolutional neural netork
+        # Convolutional neural network
         if args.dataset == 'mnist':
             global_model = CNNMnist(args=args)
         elif args.dataset == 'fmnist':

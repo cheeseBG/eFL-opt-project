@@ -68,7 +68,7 @@ if __name__ == '__main__':
             global_model = CNNCifar(args=args)
 
     elif args.model == 'mlp':
-        # Multi-layer preceptron
+        # Multi-layer perceptron
         img_size = train_dataset[0][0].shape
         len_in = 1
         for x in img_size:
