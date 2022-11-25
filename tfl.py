@@ -143,11 +143,15 @@ if __name__ == '__main__':
 
     # Save results
     import pandas as pd
-    total_results = [train_accuracy, train_loss, val_acc_list, val_loss_list, com_time_list]
-    df = pd.DataFrame(cos_sim_list,
-                      colums=['train_acc', 'train_loss',
-                              'test_acc', 'test_loss',
-                              'com_time'])
+    total_results = {
+        'train_acc': train_accuracy,
+        'train_loss': train_loss,
+        'test_acc': val_acc_list,
+        'test_loss': val_loss_list,
+        'com_time': com_time_list
+    }
+    df = pd.DataFrame(total_results)
+
     if args.dirty > 0:
         df.to_csv('results/tfl_dirty{}_{}.csv'.format(str(args.dirty), args.model))
     else:
@@ -169,9 +173,8 @@ if __name__ == '__main__':
     print('\n Total Run Time: {0:0.4f}'.format(time.time()-start_time))
 
     # PLOTTING (optional)
-    # import matplotlib
-    # import matplotlib.pyplot as plt
-    # matplotlib.use('Agg')
+    import matplotlib
+    import matplotlib.pyplot as plt
 
     # Plot Loss curve
     plt.figure()
@@ -179,9 +182,9 @@ if __name__ == '__main__':
     plt.plot(range(len(train_loss)), train_loss, color='r')
     plt.ylabel('Training loss')
     plt.xlabel('Communication Rounds')
-    plt.savefig('../save/fed_{}_{}_{}_C[{}]_iid[{}]_E[{}]_B[{}]_loss.png'.
-                format(args.dataset, args.model, args.epochs, args.frac,
-                       args.iid, args.local_ep, args.local_bs))
+    # plt.savefig('../save/fed_{}_{}_{}_C[{}]_iid[{}]_E[{}]_B[{}]_loss.png'.
+    #             format(args.dataset, args.model, args.epochs, args.frac,
+    #                    args.iid, args.local_ep, args.local_bs))
 
     # # Plot Test Accuracy vs Communication rounds
     plt.figure()
@@ -189,6 +192,4 @@ if __name__ == '__main__':
     plt.plot(range(len(val_acc_list)), val_acc_list, color='k')
     plt.ylabel('Test Accuracy')
     plt.xlabel('Communication Rounds')
-    plt.savefig('../save/fed_{}_{}_{}_C[{}]_iid[{}]_E[{}]_B[{}]_acc.png'.
-                format(args.dataset, args.model, args.epochs, args.frac,
-                       args.iid, args.local_ep, args.local_bs))
+    plt.show()
