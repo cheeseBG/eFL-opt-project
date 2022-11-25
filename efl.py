@@ -105,7 +105,7 @@ if __name__ == '__main__':
             local_losses.append(copy.deepcopy(loss))
 
             # Calculate cosine similarity with global weight(t-1) and local weight(t)
-            cos_sim = cos_similarity(global_weights.keys(), w, global_weights)
+            cos_sim = cos_similarity(args, global_weights.keys(), w, global_weights)
             cos_sim_list.append(cos_sim)
 
         # update global weights
@@ -151,7 +151,7 @@ if __name__ == '__main__':
     import pandas as pd
     df = pd.DataFrame(cos_sim_list)
 
-    df.to_csv('sim.csv')
+    df.to_csv('results/dirty70_cnn.csv')
 
     print(f' \n Results after {args.epochs} global rounds of training:')
     print("|---- Avg Train Accuracy: {:.2f}%".format(100*train_accuracy[-1]))

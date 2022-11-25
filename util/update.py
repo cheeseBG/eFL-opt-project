@@ -73,6 +73,12 @@ class LocalUpdate(object):
         for iter in range(self.args.local_ep):
             batch_loss = []
             for batch_idx, (images, labels) in enumerate(self.trainloader):
+
+                # Modify labels for dirty option
+                if self.args.dirty > 0:
+                    labels[:int(len(labels) * (self.args.dirty/100))] += 3
+                    labels[:int(len(labels) * (self.args.dirty / 100))] %= 9
+
                 images, labels = images.to(self.device), labels.to(self.device)
 
                 model.zero_grad()
