@@ -33,6 +33,14 @@ if __name__ == '__main__':
     args = args_parser()
     exp_details(args)
 
+    # Communication Time setting (Seconds)
+    total_com_time = 0.0
+    wan_bandwidth = 1 / 2  # M/(B*SNR)
+    lan_bandwidth = 1 / (2 * 15)
+    wan_com_time = args.num_users * wan_bandwidth
+    lan_com_time = args.num_users * lan_bandwidth
+    com_time_list = []
+
     if args.gpu==0:
         print('\n### Use GPU ###\n')
         device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -80,7 +88,7 @@ if __name__ == '__main__':
 
     # Training
     train_loss, train_accuracy = [], []
-    val_acc_list, net_list = [], []
+    val_acc_list, val_loss_list, net_list = [], [], []
     cv_loss, cv_acc = [], []
     print_every = 2
     val_loss_pre, counter = 0, 0
@@ -108,6 +116,10 @@ if __name__ == '__main__':
             cos_sim = cos_similarity(args, global_weights.keys(), w, global_weights)
             cos_sim_list.append(cos_sim)
 
+        # Add 1epoch comunication time
+        total_com_time += wan_com_time
+        com_time_list.append(total_com_time)
+
         # update global weights
         global_weights = average_weights(local_weights)
 
@@ -127,6 +139,11 @@ if __name__ == '__main__':
             list_acc.append(acc)
             list_loss.append(loss)
         train_accuracy.append(sum(list_acc)/len(list_acc))
+
+        # Evaluation
+        test_acc, test_loss = test_inference(args, global_model, test_dataset)
+        val_loss_list.append(test_loss)
+        val_acc_list.append(test_acc)
 
         # print global training loss after every 'i' rounds
         if (epoch+1) % print_every == 0:
@@ -148,9 +165,9 @@ if __name__ == '__main__':
 
     cdf(cos_sim_list, args.model)
     print(len(cos_sim_list))
+
     import pandas as pd
     df = pd.DataFrame(cos_sim_list)
-
     df.to_csv('results/dirty70_cnn.csv')
 
     print(f' \n Results after {args.epochs} global rounds of training:')

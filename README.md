@@ -5,7 +5,7 @@ This project is based on [Federated-Learning-PyTorch](https://github.com/AshwinR
 # FL Type
 ### Traditional FL
 - Run MLP with dirty dataset</p>
-`python tfl.py --gpu=0 --dirty=70 --local_ep=15 --num_users=10`
+`python tfl.py --gpu=0 --dirty=70`
   
 - Run CNN with dirty dataset</p>
 `python tfl.py --gpu=0 --dirty=70 --model=cnn --local_ep=15 --num_users=10`
