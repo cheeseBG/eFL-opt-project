@@ -24,6 +24,14 @@ from plot.plot_fig4 import cdf
 
 
 if __name__ == '__main__':
+
+    lan_dict = {
+        1: 1/15,  # bandwidth
+        2: 1/20,
+        3: 1/60,
+        4: 1/17
+    }
+
     start_time = time.time()
 
     # define paths
@@ -36,10 +44,21 @@ if __name__ == '__main__':
     # Communication Time setting (Seconds)
     total_com_time = 0.0
     wan_bandwidth = 1 / 2  # M/(B*SNR)
-    lan_bandwidth = 1 / (2 * 15)
-    wan_com_time = args.num_users * wan_bandwidth
-    lan_com_time = args.num_users * lan_bandwidth
+    wan_com_time = len(lan_dict) * wan_bandwidth
+    lan_com_time = wan_bandwidth
     com_time_list = []
+
+    # dirty proportion: 1/5 propotion of end devices
+    dirty_ed = int(args.num_users * (1 / 5))
+    exception_list = []
+
+    # Set similarity threshold
+    thres = 0
+    if args.model == 'mlp':
+        thres = 0.98
+    else:
+        thres = 0.9999
+
 
     if args.gpu==0:
         print('\n### Use GPU ###\n')
@@ -96,29 +115,50 @@ if __name__ == '__main__':
     # cosine similarity
     cos_sim_list = []
 
+    idxs_users = []
+    for i in range(0, args.num_users):
+        lan_class = np.random.randint(1, 5)
+        idxs_users.append([i, lan_class])
+
     for epoch in tqdm(range(args.epochs)):
         local_weights, local_losses = [], []
         print(f'\n | Global Training Round : {epoch+1} |\n')
 
         global_model.train()
         m = max(int(args.frac * args.num_users), 1)  # fraction of clients (default: 10)
-        idxs_users = np.random.choice(range(args.num_users), m, replace=False)
 
-        for idx in idxs_users:
+        except_users = 0
+
+        for idx, lan in idxs_users:
             local_model = LocalDevice(args=args, dataset=train_dataset,
                                       idxs=user_groups[idx], logger=logger)
             w, loss = local_model.update_weights(
-                model=copy.deepcopy(global_model), global_round=epoch)
-            local_weights.append(copy.deepcopy(w))
-            local_losses.append(copy.deepcopy(loss))
+                model=copy.deepcopy(global_model), global_round=epoch, dirty_ed=dirty_ed)
+
+            if dirty_ed > 0:
+                dirty_ed -= 1
 
             # Calculate cosine similarity with global weight(t-1) and local weight(t)
             cos_sim = cos_similarity(args, global_weights.keys(), w, global_weights)
             cos_sim_list.append(cos_sim)
 
+            # If similarity value is smaller than threshold, not aggregate
+            if cos_sim < thres:
+                except_users += 1
+                continue
+
+            # Calculate LAN aggregation time
+            total_com_time += lan_com_time * lan_dict[lan]
+
+            local_weights.append(copy.deepcopy(w))
+            local_losses.append(copy.deepcopy(loss))
+
+
         # Add 1epoch comunication time
         total_com_time += wan_com_time
         com_time_list.append(total_com_time)
+
+        exception_list.append(except_users)
 
         # update global weights
         global_weights = average_weights(local_weights)
@@ -163,12 +203,21 @@ if __name__ == '__main__':
     # Test inference after completion of training
     test_acc, test_loss = test_inference(args, global_model, test_dataset)
 
-    cdf(cos_sim_list, args.model)
-    print(len(cos_sim_list))
-
     import pandas as pd
-    df = pd.DataFrame(cos_sim_list)
-    df.to_csv('results/dirty70_cnn.csv')
+
+    total_results = {
+        'train_acc': train_accuracy,
+        'train_loss': train_loss,
+        'test_acc': val_acc_list,
+        'test_loss': val_loss_list,
+        'com_time': com_time_list,
+        'except_users': exception_list,
+        #'cos_sim': cos_sim_list
+    }
+    df = pd.DataFrame(total_results)
+
+    df.to_csv('results/efl_dirty{}_{}.csv'.format(str(args.dirty), args.model))
+
 
     print(f' \n Results after {args.epochs} global rounds of training:')
     print("|---- Avg Train Accuracy: {:.2f}%".format(100*train_accuracy[-1]))

@@ -34,6 +34,9 @@ if __name__ == '__main__':
     wan_com_time = args.num_users * wan_bandwidth
     com_time_list = []
 
+    # dirty proportion: 1/5 propotion of end devices
+    dirty_ed = int(args.num_users * (1/5))
+
     if args.gpu == 0:
         print('\n### Use GPU ###\n')
         device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -99,9 +102,12 @@ if __name__ == '__main__':
             local_model = LocalUpdate(args=args, dataset=train_dataset,
                                       idxs=user_groups[idx], logger=logger)
             w, loss = local_model.update_weights(
-                model=copy.deepcopy(global_model), global_round=epoch)
+                model=copy.deepcopy(global_model), global_round=epoch, dirty_ed=dirty_ed)
             local_weights.append(copy.deepcopy(w))
             local_losses.append(copy.deepcopy(loss))
+
+            if dirty_ed > 0:
+                dirty_ed -= 1
 
         # Add 1epoch comunication time
         total_com_time += wan_com_time
@@ -155,7 +161,7 @@ if __name__ == '__main__':
     if args.dirty > 0:
         df.to_csv('results/tfl_dirty{}_{}.csv'.format(str(args.dirty), args.model))
     else:
-        df.to_csv('results/tfl_nodirt_{}.csv'.format(str(args.dirty), args.model))
+        df.to_csv('results/tfl_nodirt_{}.csv'.format(args.model))
 
 
     print(f' \n Results after {args.epochs} global rounds of training:')
@@ -188,8 +194,8 @@ if __name__ == '__main__':
 
     # # Plot Test Accuracy vs Communication rounds
     plt.figure()
-    plt.title('Test Accuracy vs Communication rounds')
+    plt.title('Accuracy vs Communication rounds')
     plt.plot(range(len(val_acc_list)), val_acc_list, color='k')
-    plt.ylabel('Test Accuracy')
+    plt.ylabel('Accuracy')
     plt.xlabel('Communication Rounds')
     plt.show()

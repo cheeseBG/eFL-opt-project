@@ -1,28 +1,29 @@
 import matplotlib.pyplot as plt
+import pandas as pd
+import numpy as np
 
 
-def acc_iter_plot(acc_list):
+def acc_iter_plot(tfl_acc_list, dtfl_acc_list):
     '''
 
     :param acc_list: [[fl_type_name1, list of acc], [fl_type_name2, list of acc], ...]
     :return: present acc-iter plot
     '''
 
-    sim_list.sort()
-
-    sim_mean = np.mean(sim_list)
-    sim_std = np.std(sim_list)
-
-    sim_pdf = norm.pdf(sim_list, sim_mean, sim_std)
-
-    X = sim_list
-    Y = np.cumsum(sim_pdf)
-    print(Y)
-
     plt.figure()
-    plt.xlabel('Similarity between model parameters', fontsize=30)
-    plt.ylabel('CDF', fontsize=30)
-    plt.plot(X, Y, label=model_name)
-    plt.grid()
+    plt.plot(range(len(dtfl_acc_list)), dtfl_acc_list, label='Traditional FL')
+    plt.plot(range(len(tfl_acc_list)), tfl_acc_list, label='FL without dirty labels')
+    plt.ylabel('Accuracy')
+    plt.xlabel('Iterations')
     plt.legend()
+    plt.grid()
+    plt.ylim([0.3, 1.0])
     plt.show()
+
+
+if __name__=='__main__':
+    tfl_df = pd.read_csv('../results/tfl_nodirt_mlp.csv')
+    dtfl_df = pd.read_csv('../results/tfl_dirty70_mlp.csv')
+    tfl_acc_list = tfl_df['train_acc'].to_list()
+    dtfl_acc_list = dtfl_df['train_acc'].to_list()
+    acc_iter_plot(tfl_acc_list, dtfl_acc_list)

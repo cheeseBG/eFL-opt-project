@@ -36,7 +36,8 @@ smaller-> LAN bandwidth가 더 크기때문에 communication time saving
 3. Dirty label proportion: 0.7
 
 4. Threshold setting
-    - dd
+    - MLP: 0.98
+    - CNN: 0.9999
 
 5. Communication Time
     - end device가 직접적으로 서버와 통신하는 경우 update time = 0.5s

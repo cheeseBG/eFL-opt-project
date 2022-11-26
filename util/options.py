@@ -49,7 +49,7 @@ def args_parser():
                         of classes")
     parser.add_argument('--gpu',type=int, default=None, help="To use cuda, set \
                         to a specific GPU ID. Default set to use CPU.")
-    parser.add_argument('--optimizer', type=str, default='sgd', help="type \
+    parser.add_argument('--optimizer', type=str, default='adam', help="type \
                         of optimizer")
     parser.add_argument('--iid', type=int, default=1,
                         help='Default set to IID. Set to 0 for non-IID.')

@@ -22,5 +22,3 @@ class LocalDevice(LocalUpdate):
 
         # Default criterion set to NLL loss function
         self.criterion = nn.NLLLoss().to(self.device)
-
-        self.ip_address = None

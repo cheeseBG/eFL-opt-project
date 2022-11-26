@@ -57,7 +57,7 @@ class LocalUpdate(object):
                                 batch_size=int(len(idxs_test)/10), shuffle=False)
         return trainloader, validloader, testloader
 
-    def update_weights(self, model, global_round):
+    def update_weights(self, model, global_round, dirty_ed):
         # Set mode to train model
         model.train()
         epoch_loss = []
@@ -75,7 +75,7 @@ class LocalUpdate(object):
             for batch_idx, (images, labels) in enumerate(self.trainloader):
 
                 # Modify labels for dirty option
-                if self.args.dirty > 0:
+                if self.args.dirty > 0 and dirty_ed > 0:
                     labels[:int(len(labels) * (self.args.dirty/100))] += 3
                     labels[:int(len(labels) * (self.args.dirty / 100))] %= 9
 
