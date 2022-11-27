@@ -55,7 +55,7 @@ if __name__ == '__main__':
     # Set similarity threshold
     thres = 0
     if args.model == 'mlp':
-        thres = 0.98
+        thres = 0.80
     else:
         thres = 0.9999
 
@@ -143,7 +143,7 @@ if __name__ == '__main__':
             cos_sim_list.append(cos_sim)
 
             # If similarity value is smaller than threshold, not aggregate
-            if cos_sim < thres:
+            if cos_sim < thres and epoch != 0:
                 except_users += 1
                 continue
 
@@ -160,14 +160,19 @@ if __name__ == '__main__':
 
         exception_list.append(except_users)
 
-        # update global weights
-        global_weights = average_weights(local_weights)
+        if local_weights:
+            # update global weights
+            global_weights = average_weights(local_weights)
 
-        # update global weights
-        global_model.load_state_dict(global_weights)
+            # update global weights
+            global_model.load_state_dict(global_weights)
 
-        loss_avg = sum(local_losses) / len(local_losses)
-        train_loss.append(loss_avg)
+            loss_avg = sum(local_losses) / len(local_losses)
+            train_loss.append(loss_avg)
+        else:
+            print('## Except Users ##')
+            print(except_users)
+            train_loss.append(train_loss[-1])
 
         # Calculate avg training accuracy over all users at every epoch
         list_acc, list_loss = [], []
@@ -212,11 +217,18 @@ if __name__ == '__main__':
         'test_loss': val_loss_list,
         'com_time': com_time_list,
         'except_users': exception_list,
-        #'cos_sim': cos_sim_list
+
     }
+    sim_result = {
+        'cos_sim': cos_sim_list
+    }
+
     df = pd.DataFrame(total_results)
 
     df.to_csv('results/efl_dirty{}_{}.csv'.format(str(args.dirty), args.model))
+
+    sim_df = pd.DataFrame(sim_result)
+    df.to_csv('results/efl_dirty{}_{}_sim.csv'.format(str(args.dirty), args.model))
 
 
     print(f' \n Results after {args.epochs} global rounds of training:')

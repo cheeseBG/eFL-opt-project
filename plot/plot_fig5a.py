@@ -23,7 +23,8 @@ def acc_iter_plot(tfl_acc_list, dtfl_acc_list):
 
 if __name__=='__main__':
     tfl_df = pd.read_csv('../results/tfl_nodirt_mlp.csv')
-    dtfl_df = pd.read_csv('../results/tfl_dirty70_mlp.csv')
+    dtfl_df = pd.read_csv('../results/efl_dirty70_mlp.csv')
+
     tfl_acc_list = tfl_df['train_acc'].to_list()
     dtfl_acc_list = dtfl_df['train_acc'].to_list()
     acc_iter_plot(tfl_acc_list, dtfl_acc_list)
