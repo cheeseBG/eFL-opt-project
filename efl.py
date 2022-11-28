@@ -55,7 +55,7 @@ if __name__ == '__main__':
     # Set similarity threshold
     thres = 0
     if args.model == 'mlp':
-        thres = 0.80
+        thres = 0.93
     else:
         thres = 0.9999
 
@@ -228,7 +228,7 @@ if __name__ == '__main__':
     df.to_csv('results/efl_dirty{}_{}.csv'.format(str(args.dirty), args.model))
 
     sim_df = pd.DataFrame(sim_result)
-    df.to_csv('results/efl_dirty{}_{}_sim.csv'.format(str(args.dirty), args.model))
+    sim_df.to_csv('results/efl_dirty{}_{}_sim.csv'.format(str(args.dirty), args.model))
 
 
     print(f' \n Results after {args.epochs} global rounds of training:')
