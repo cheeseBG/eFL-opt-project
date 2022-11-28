@@ -35,7 +35,7 @@ if __name__ == '__main__':
     com_time_list = []
 
     # dirty proportion: 1/5 propotion of end devices
-    dirty_ed = int(args.num_users * (1/5))
+    dirty_ed = int(args.num_users * (4/5))
 
     if args.gpu == 0:
         print('\n### Use GPU ###\n')

@@ -49,13 +49,13 @@ if __name__ == '__main__':
     com_time_list = []
 
     # dirty proportion: 1/5 propotion of end devices
-    dirty_ed = int(args.num_users * (1 / 5))
+    dirty_ed = int(args.num_users * (4 / 5))
     exception_list = []
 
     # Set similarity threshold
     thres = 0
     if args.model == 'mlp':
-        thres = 0.93
+        thres = 0.98
     else:
         thres = 0.9999
 
