@@ -34,9 +34,6 @@ if __name__ == '__main__':
     wan_com_time = args.num_users * wan_bandwidth
     com_time_list = []
 
-    # dirty proportion: 1/5 propotion of end devices
-    dirty_ed = int(args.num_users * (4/5))
-
     if args.gpu == 0:
         print('\n### Use GPU ###\n')
         device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -85,12 +82,13 @@ if __name__ == '__main__':
 
     # Training
     train_loss, train_accuracy = [], []
-    val_acc_list, val_loss_list, net_list = [], [], []
-    cv_loss, cv_acc = [], []
+    val_acc_list, val_loss_list = [], []
     print_every = 2
-    val_loss_pre, counter = 0, 0
 
     for epoch in tqdm(range(args.epochs)):
+        # dirty proportion: 1/5 propotion of end devices
+        dirty_ed = int(args.num_users * (4 / 5))
+
         local_weights, local_losses = [], []
         print(f'\n | Global Training Round : {epoch+1} |\n')
 

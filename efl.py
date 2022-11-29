@@ -48,14 +48,12 @@ if __name__ == '__main__':
     lan_com_time = wan_bandwidth
     com_time_list = []
 
-    # dirty proportion: 1/5 propotion of end devices
-    dirty_ed = int(args.num_users * (4 / 5))
     exception_list = []
 
     # Set similarity threshold
     thres = 0
     if args.model == 'mlp':
-        thres = 0.98
+        thres = 0.79
     else:
         thres = 0.9999
 
@@ -121,6 +119,9 @@ if __name__ == '__main__':
         idxs_users.append([i, lan_class])
 
     for epoch in tqdm(range(args.epochs)):
+        # dirty proportion: 1/5 propotion of end devices
+        dirty_ed = int(args.num_users * (4 / 5))
+        
         local_weights, local_losses = [], []
         print(f'\n | Global Training Round : {epoch+1} |\n')
 

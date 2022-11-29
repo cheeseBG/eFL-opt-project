@@ -18,6 +18,6 @@ def ctime_iter_plot(dtfl_ctime):
 
 
 if __name__=='__main__':
-    dtfl_df = pd.read_csv('../results/tfl_dirty70_mlp.csv')
+    dtfl_df = pd.read_csv('../results/efl_dirty70_mlp.csv')
     dtfl_ctime = dtfl_df['com_time'].to_list()
     ctime_iter_plot(dtfl_ctime)
