@@ -53,7 +53,7 @@ if __name__ == '__main__':
     # Set similarity threshold
     thres = 0
     if args.model == 'mlp':
-        thres = 0.79
+        thres = 0.94
     else:
         thres = 0.9999
 
