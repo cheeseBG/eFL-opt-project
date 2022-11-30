@@ -18,7 +18,7 @@ def acc_iter_plot(tfl_acc_list, dtfl_acc_list, efl_acc_list):
     plt.xlabel('Iterations')
     plt.legend()
     plt.grid()
-    plt.ylim([0.3, 1.0])
+    plt.ylim([0.0, 1.0])
     plt.show()
 
 

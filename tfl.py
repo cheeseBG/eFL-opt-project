@@ -89,6 +89,9 @@ if __name__ == '__main__':
         # dirty proportion: 1/5 propotion of end devices
         dirty_ed = int(args.num_users * (4 / 5))
 
+        if epoch == 0:
+            dirty_ed = 0
+
         local_weights, local_losses = [], []
         print(f'\n | Global Training Round : {epoch+1} |\n')
 
